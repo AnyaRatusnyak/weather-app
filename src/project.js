@@ -35,6 +35,7 @@ function handleSubmit(Event) {
   let city = document.querySelector("#city-input").value;
   searchCity(city);
 }
+
 function getCurrentLocation(Event) {
   Event.preventDefault();
   navigator.geolocation.getCurrentPosition(searchLocation);
@@ -43,28 +44,31 @@ function getCurrentLocation(Event) {
 let formInput = document.querySelector("#form-input");
 formInput.addEventListener("submit", handleSubmit);
 
-function convertToFahrenheit(Event) {
+function displayFarenheitTemperature(Event) {
   Event.preventDefault();
-  let temperature = document.querySelector("#temp");
-  temperature.innerHTML = 66;
+  let fahrenheitTemperature = (celsiusTemperature * 9) / 5 + 32;
+  let temperatureElement = document.querySelector("#temp");
+  temperatureElement.innerHTML = Math.round(fahrenheitTemperature);
 }
+
 let fahrenheitLink = document.querySelector("#fahrenheit-link");
+fahrenheitLink.addEventListener("click", displayFarenheitTemperature);
 
-fahrenheitLink.addEventListener("click", convertToFahrenheit);
-
-function convertToCelsius(Event) {
+function displayCelsiusTemperature(Event) {
   Event.preventDefault();
-  let temperatureCelsius = document.querySelector("#temp");
-  temperatureCelsius.innerHTML = "19";
+  let temperatureElement = document.querySelector("#temp");
+  temperatureElement.innerHTML = Math.round(celsiusTemperature);
 }
+
 let celsiusLink = document.querySelector("#celsius-link");
-celsiusLink.addEventListener("click", convertToCelsius);
+celsiusLink.addEventListener("click", displayCelsiusTemperature);
+let celsiusTemperature = null;
 
 function displayWeatherCondition(response) {
   document.querySelector("#city-title").innerHTML = response.data.name;
-  document.querySelector("#temp").innerHTML = Math.round(
-    response.data.main.temp
-  );
+  let temperatureElement = document.querySelector("#temp");
+  celsiusTemperature = response.data.main.temp;
+  temperatureElement.innerHTML = Math.round(celsiusTemperature);
   document.querySelector("#weather").innerHTML = response.data.weather[0].main;
   document.querySelector("#wind").innerHTML = `${Math.round(
     response.data.wind.speed
@@ -72,6 +76,11 @@ function displayWeatherCondition(response) {
   document.querySelector(
     "#humidity"
   ).innerHTML = `${response.data.main.humidity}`;
+  let iconElement = document.querySelector("#icon");
+  iconElement.setAttribute(
+    "src",
+    `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
+  );
 }
 
 function searchLocation(position) {
